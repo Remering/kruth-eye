@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.remering.krutheye.mapper.YggdrasilTextureMapper">
+
+    <select id="getById" parameterType="int" resultType="com.github.remering.krutheye.entity.YggdrasilTextureEntity">
+        select * from kruth_eye_texture where id = #{id}
+    </select>
+
+    <select id="getByHash" parameterType="com.github.remering.krutheye.bean.TextureHash" resultType="com.github.remering.krutheye.entity.YggdrasilTextureEntity">
+        select * from kruth_eye_texture where hash = #{hash}
+    </select>
+
+    <select id="getByProfileUUID" parameterType="com.github.remering.krutheye.bean.YggdrasilUUID" resultType="com.github.remering.krutheye.entity.YggdrasilTextureEntity">
+        select * from kruth_eye_texture
+        where id in (
+            select texture_id from kruth_eye_profile_texture where profile_uuid = #{profileUUID}
+        )
+    </select>
+
+    <select id="getPngById" parameterType="int" resultType="java.io.InputStream">
+        select image from kruth_eye_texture_png where id = #{id}
+    </select>
+
+    <select id="getPngByTextureId" parameterType="int" resultType="java.io.InputStream">
+        select image from kruth_eye_texture_png
+        where texture_id = #{textureId}
+    </select>
+
+    <select id="getPngByHash" parameterType="com.github.remering.krutheye.bean.TextureHash" resultType="java.io.InputStream">
+        select image from kruth_eye_texture_png
+        right join kruth_eye_texture
+        on kruth_eye_texture_png.texture_id = kruth_eye_texture.id
+        where kruth_eye_texture.hash = #{textureHash}
+    </select>
+
+    <delete id="unlinkTexture">
+        delete from kruth_eye_profile_texture
+        where profile_uuid = #{profileUUID} and texture_id = #{textureHash}
+    </delete>
+
+    <insert id="add" parameterType="com.github.remering.krutheye.entity.YggdrasilTextureEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into kruth_eye_texture(hash, model, type) values (#{entity.hash}, #{entity.model}, #{entity.type})
+    </insert>
+
+    <insert id="addPng">
+        insert into kruth_eye_texture_png(texture_id, image) values (#{textureId}, #{image})
+    </insert>
+
+    <insert id="bindTexture">
+        insert into kruth_eye_profile_texture(profile_uuid, texture_id) values (#{profileUUID}, #{textureId})
+    </insert>
+</mapper>

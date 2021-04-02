@@ -1,0 +1,29 @@
+kruth-eye:
+  rsa:
+    openssl:
+      enable: true
+      private-key-location: classpath:test-rsa-private-key.pem
+      public-key-location: classpath:test-rsa-public-key.pem
+
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: test, default
+  application:
+    name: kruth-eye
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/kruth_eye?serverTimezone=UTC
+    username: mafumafu
+    password: WWT1015488424cnm
+  redis:
+    host: localhost
+    port: 6379
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-handlers-package: com.github.remering.krutheye.converter

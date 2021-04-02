@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.remering.krutheye.mapper.YggdrasilProfileMapper">
+
+    <select id="getById" parameterType="int" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
+        select * from kruth_eye_profile where id = #{id}
+    </select>
+
+    <select id="getByName" parameterType="string" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
+        select * from kruth_eye_profile where name = #{name}
+    </select>
+
+    <select id="getByNames" parameterType="list" resultType="com.github.remering.krutheye.bean.YggdrasilUUID">
+        select uuid from kruth_eye_profile where name in
+            <foreach collection="names" item="name" open="(" close=")" separator=",">
+                #{name}
+            </foreach>
+    </select>
+
+    <select id="getByUUID" parameterType="com.github.remering.krutheye.bean.YggdrasilUUID" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
+        select * from kruth_eye_profile where uuid = #{uuid}
+    </select>
+
+    <select id="getByOwner" parameterType="com.github.remering.krutheye.entity.YggdrasilUserEntity" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
+        select * from kruth_eye_profile where user_id = #{owner.id}
+    </select>
+
+    <select id="getByOwnerId" parameterType="int" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
+        select * from kruth_eye_profile where user_id = #{ownerId}
+    </select>
+
+    <select id="authenticateByNamePassword" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityAuthenticateResultMap">
+        select
+               profile.id, profile.uuid, profile.name, profile.create_at,
+               user.id, user.uuid, user.username, user.register_ip, user.password_changed_at, user.email_verified
+        from kruth_eye_profile profile, kruth_eye_user user
+        where profile.user_id = user.id and user.password = #{password} and profile.name = #{name}
+    </select>
+
+    <select id="getName" parameterType="com.github.remering.krutheye.bean.YggdrasilUUID" resultType="string">
+        select name from kruth_eye_profile where uuid = #{uuid}
+    </select>
+
+    <insert id="add" parameterType="com.github.remering.krutheye.entity.YggdrasilProfileEntity">
+        insert into kruth_eye_profile(uuid, name, user_id, create_at) values (#{entity.uuid}, #{entity.name}, #{entity.user.id}, #{entity.createAt})
+    </insert>
+
+    <delete id="unlinkTexture">
+        delete kruth_eye_profile_texture from kruth_eye_profile_texture
+        left join kruth_eye_texture
+        on kruth_eye_profile_texture.texture_id = kruth_eye_texture.id
+        where kruth_eye_profile_texture.profile_uuid = #{profileUUID} and kruth_eye_texture.type = #{type}
+    </delete>
+
+    <resultMap id="YggdrasilProfileEntityAuthenticateResultMap" type="com.github.remering.krutheye.entity.YggdrasilProfileEntity">
+        <constructor>
+            <idArg columnPrefix="profile." name="id" javaType="int" jdbcType="INTEGER" column="id"/>
+            <arg columnPrefix="profile." name="uuid" javaType="com.github.remering.krutheye.bean.YggdrasilUUID" jdbcType="BINARY" column="uuid"/>
+            <arg columnPrefix="profile." name="name" javaType="String" jdbcType="VARCHAR" column="name"/>
+            <arg columnPrefix="profile." name="createAt" javaType="java.time.Instant" jdbcType="TIMESTAMP" column="create_at"/>
+        </constructor>
+        <association property="user" columnPrefix="user." javaType="com.github.remering.krutheye.entity.YggdrasilUserEntity"/>
+    </resultMap>
+
+    <resultMap id="YggdrasilProfileEntityResultMap" type="com.github.remering.krutheye.entity.YggdrasilProfileEntity" autoMapping="true">
+        <constructor>
+            <idArg name="id" javaType="int" jdbcType="INTEGER" column="id"/>
+            <arg name="uuid" javaType="com.github.remering.krutheye.bean.YggdrasilUUID" jdbcType="BINARY" column="uuid"/>
+            <arg name="name" javaType="String" jdbcType="VARCHAR" column="name"/>
+            <arg name="user" javaType="com.github.remering.krutheye.entity.YggdrasilUserEntity" column="user_id" jdbcType="INTEGER" select="com.github.remering.krutheye.mapper.YggdrasilUserMapper.getById"/>
+            <arg name="createAt" javaType="java.time.Instant" jdbcType="TIMESTAMP" column="create_at"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

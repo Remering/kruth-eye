@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.remering.krutheye.mapper.YggdrasilUserMapper">
+
+    <select id="getById" parameterType="int" resultType="com.github.remering.krutheye.entity.YggdrasilUserEntity">
+        select * from kruth_eye_user where id = #{id}
+    </select>
+
+
+    <select id="getByUUID" parameterType="com.github.remering.krutheye.bean.YggdrasilUUID" resultType="com.github.remering.krutheye.entity.YggdrasilUserEntity">
+        select * from kruth_eye_user where uuid = #{uuid}
+    </select>
+
+    <select id="getByUsername" parameterType="string" resultType="com.github.remering.krutheye.entity.YggdrasilUserEntity">
+        select * from kruth_eye_user where username = #{username}
+    </select>
+
+    <select id="getByUsernamePassword" resultType="com.github.remering.krutheye.entity.YggdrasilUserEntity">
+        select * from kruth_eye_user where username = #{username} and password = #{password}
+    </select>
+
+    <insert id="add" parameterType="com.github.remering.krutheye.entity.YggdrasilUserEntity" keyProperty="user.id" useGeneratedKeys="true">
+        insert into kruth_eye_user(uuid, username, password, register_ip, password_changed_at, email_verified)
+        values (#{user.uuid}, #{user.username}, #{password}, #{user.registerIp}, #{user.passwordChangedAt}, #{user.emailVerified})
+    </insert>
+
+    <delete id="removeByUsername" parameterType="string">
+        delete from kruth_eye_user where username = #{username}
+    </delete>
+</mapper>
