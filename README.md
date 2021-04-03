@@ -1,7 +1,20 @@
 # 工程简介
 Kruth-Eye是实现了[Yggdrasil服务端技术规范](https://github.com/yushijinhun/authlib-injector/wiki/Yggdrasil-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8A%80%E6%9C%AF%E8%A7%84%E8%8C%83) 的一个认证服务器
-
-
++ 用户部分
+    + [x] 登录
+    + [x] 刷新
+    + [x] 验证令牌
+    + [x] 吊销令牌
++ 会话部分
+    + [x] 客户端进入服务器
+    + [x] 服务器验证客户端
++ 角色部分
+    + [x] 查询角色属性
+    + [x] 按名称批量查询角色
+    + [x] PUT上传材质
+    + [x] DELETE删除材质
++ 扩展API
+    + [x] API元数据获取
 # 延伸阅读
 **为什么叫做Kruth-Eye?**
 
