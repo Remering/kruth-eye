@@ -9,9 +9,9 @@ import java.time.Instant
 
 data class YggdrasilProfileEntity @JvmOverloads constructor(
     @Param("id") var id: Int? = null,
-    @Param("name") val name: String,
-    @Param("uuid") val uuid: YggdrasilProfileUUID = uuidFromProfileName(name),
-    @Param("createAt") val createAt: Instant = Instant.now(),
+    @Param("name") var name: String = "",
+    @Param("uuid") var uuid: YggdrasilProfileUUID = uuidFromProfileName(name),
+    @Param("createAt") var createAt: Instant = Instant.now(),
     @Param("user") var user: YggdrasilUserEntity = YggdrasilUserEntity(),
 ): MessageEntity<YggdrasilProfileEntity, YggdrasilProfileMessage> {
     override fun toMessage() = YggdrasilProfileMessage(this)

@@ -21,18 +21,14 @@
         select * from kruth_eye_profile where uuid = #{uuid}
     </select>
 
-    <select id="getByOwner" parameterType="com.github.remering.krutheye.entity.YggdrasilUserEntity" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
-        select * from kruth_eye_profile where user_id = #{owner.id}
-    </select>
-
     <select id="getByOwnerId" parameterType="int" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityResultMap">
-        select * from kruth_eye_profile where user_id = #{ownerId}
+        select * from kruth_eye_profile where user_id = #{ownerID}
     </select>
 
     <select id="authenticateByNamePassword" resultType="com.github.remering.krutheye.entity.YggdrasilProfileEntity" resultMap="YggdrasilProfileEntityAuthenticateResultMap">
         select
-               profile.id, profile.uuid, profile.name, profile.create_at,
-               user.id, user.uuid, user.username, user.register_ip, user.password_changed_at, user.email_verified
+               profile.id `profile.id`, profile.uuid `profile.uuid`, profile.name `profile.name`, profile.create_at `profile.create_at`,
+               user.id `user.id`, user.uuid `user.uuid`, user.username `user.username`, user.register_ip `user.register_ip`, user.password_changed_at `user.password_changed_at`, user.email_verified `user.email_verified`
         from kruth_eye_profile profile, kruth_eye_user user
         where profile.user_id = user.id and user.password = #{password} and profile.name = #{name}
     </select>
@@ -53,13 +49,16 @@
     </delete>
 
     <resultMap id="YggdrasilProfileEntityAuthenticateResultMap" type="com.github.remering.krutheye.entity.YggdrasilProfileEntity">
-        <constructor>
-            <idArg columnPrefix="profile." name="id" javaType="int" jdbcType="INTEGER" column="id"/>
-            <arg columnPrefix="profile." name="uuid" javaType="com.github.remering.krutheye.bean.YggdrasilUUID" jdbcType="BINARY" column="uuid"/>
-            <arg columnPrefix="profile." name="name" javaType="String" jdbcType="VARCHAR" column="name"/>
-            <arg columnPrefix="profile." name="createAt" javaType="java.time.Instant" jdbcType="TIMESTAMP" column="create_at"/>
-        </constructor>
-        <association property="user" columnPrefix="user." javaType="com.github.remering.krutheye.entity.YggdrasilUserEntity"/>
+        <id column="profile.id" property="id" javaType="int" jdbcType="INTEGER"/>
+        <result column="profile.uuid" property="uuid" javaType="com.github.remering.krutheye.bean.YggdrasilUUID" jdbcType="BINARY"/>
+        <result column="profile.name" property="name" javaType="String" jdbcType="VARCHAR"/>
+        <result column="profile.create_at" property="createAt" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
+        <result column="user.id" property="user.id" javaType="Int" jdbcType="INTEGER"/>
+        <result column="user.uuid" property="user.uuid" javaType="com.github.remering.krutheye.bean.YggdrasilUUID" jdbcType="BINARY"/>
+        <result column="user.username" property="user.username" javaType="string" jdbcType="VARCHAR"/>
+        <result column="user.register_ip" property="user.registerIp" javaType="java.net.InetAddress" jdbcType="BINARY"/>
+        <result column="user.password_changed_at" property="user.passwordChangedAt" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
+        <result column="user.email_verified" property="user.emailVerified" javaType="boolean" jdbcType="BIT"/>
     </resultMap>
 
     <resultMap id="YggdrasilProfileEntityResultMap" type="com.github.remering.krutheye.entity.YggdrasilProfileEntity" autoMapping="true">

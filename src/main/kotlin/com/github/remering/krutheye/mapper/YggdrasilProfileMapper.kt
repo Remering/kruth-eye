@@ -12,7 +12,6 @@ interface YggdrasilProfileMapper {
     fun getByUUID(@Param("uuid") uuid: YggdrasilProfileUUID): YggdrasilProfileEntity?
     fun getByName(@Param("name") name: String): YggdrasilProfileEntity?
     fun getByNames(@Param("names") names: List<String>): List<YggdrasilProfileUUID>
-    fun getByOwner(@Param("owner") owner: YggdrasilUserEntity): List<YggdrasilProfileEntity>
     fun getByOwnerId(@Param("ownerID") id: Int): List<YggdrasilProfileEntity>
     fun authenticateByNamePassword(@Param("name") name: String, @Param("password") password: ByteArray): YggdrasilProfileEntity?
     fun getName(@Param("uuid") uuid: YggdrasilProfileUUID): String

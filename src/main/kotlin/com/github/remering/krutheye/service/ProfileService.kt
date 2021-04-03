@@ -19,7 +19,7 @@ class ProfileService(
 
     fun getByUUID(uuid: YggdrasilProfileUUID) = mapper.getByUUID(uuid)
 
-    fun getByOwner(user: YggdrasilUserEntity) = mapper.getByOwner(user)
+    fun getByOwner(user: YggdrasilUserEntity) = mapper.getByOwnerId(user.id!!)
 
     fun getByNames(names: List<String>) = mapper.getByNames(names)
 

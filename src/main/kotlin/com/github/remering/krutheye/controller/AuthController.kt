@@ -54,7 +54,6 @@ class AuthController(
         return tupleOf(userEntity, selectedProfile, profiles)
     }
 
-
     @PostMapping("/authenticate")
     fun authenticate(@RequestBody request: AuthenticateRequest): AuthenticateResponse {
         val (username, password, clientToken, requestUser) = request
