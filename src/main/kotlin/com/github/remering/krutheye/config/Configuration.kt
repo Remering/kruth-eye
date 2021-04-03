@@ -1,4 +1,4 @@
-package com.github.remering.krutheye.config;
+package com.github.remering.krutheye.config
 
 import com.github.remering.krutheye.bean.ServerMeta
 import com.github.remering.krutheye.bean.ServerPageLink
@@ -123,7 +123,10 @@ class SessionConfiguration {
 @EnableConfigurationProperties(RateLimiterConfigurationProperties::class)
 class RateLimiterConfiguration(val properties: RateLimiterConfigurationProperties) {
 
-
+    @Configuration
+    @ConditionalOnClass(StringRedisTemplate::class)
+    @Import(RedisRateLimiterService::class)
+    inner class RedisRateLimiterConfiguration
 }
 
 @Configuration

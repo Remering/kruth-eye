@@ -6,10 +6,7 @@ import com.github.remering.krutheye.bean.ServerMeta
 import com.github.remering.krutheye.entity.YggdrasilProfileEntity
 import com.github.remering.krutheye.entity.YggdrasilUserEntity
 import com.github.remering.krutheye.message.*
-import com.github.remering.krutheye.service.TokenGeneratorService
-import com.github.remering.krutheye.service.TokenService
-import com.github.remering.krutheye.service.ProfileService
-import com.github.remering.krutheye.service.UserService
+import com.github.remering.krutheye.service.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -32,6 +29,7 @@ class AuthController(
     private val userService: UserService,
     private val profileService: ProfileService,
     private val serverMeta: ServerMeta,
+    private val rateLimiterService: RateLimiterService,
 ) {
 
     private fun authenticate(username: String, password: String): Tuple3<YggdrasilUserEntity, YggdrasilProfileEntity?, List<YggdrasilProfileEntity>> {
@@ -50,6 +48,8 @@ class AuthController(
             userEntity = selectedProfile?.user?: throw InvalidCredentialsException()
             profiles = profileService.getByOwner(userEntity)
         }
+
+        rateLimiterService.check(userEntity.username)
 
         return tupleOf(userEntity, selectedProfile, profiles)
     }
