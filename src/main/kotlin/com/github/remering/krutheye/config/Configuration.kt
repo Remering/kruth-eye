@@ -7,14 +7,20 @@ import com.github.remering.krutheye.message.ServerMetaMessage
 import com.github.remering.krutheye.service.*
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.io.pem.PemReader
+import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.AutoConfigureBefore
+import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.web.util.UriBuilder
 import org.springframework.web.util.UriComponentsBuilder
@@ -39,6 +45,7 @@ class RsaSignatureConfiguration(private val properties: RsaConfigurationProperti
         value = ["enable", "private-key-location", "public-key-location"]
     )
     @Configuration
+    @AutoConfigureOrder(100000)
     inner class RsaOpensslKeyPairConfiguration {
         private val privateKeyLocation = properties.openssl.privateKeyLocation
         private val publicKeyLocation = properties.openssl.publicKeyLocation
@@ -72,6 +79,7 @@ class RsaSignatureConfiguration(private val properties: RsaConfigurationProperti
     }
 
     @Configuration
+    @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     @ConditionalOnMissingBean(value = [PrivateKey::class, PublicKey::class])
     inner class DefaultRsaKeyPairConfiguration {
 
@@ -113,7 +121,8 @@ class TokenConfiguration {
 class SessionConfiguration {
 
     @Configuration
-    @ConditionalOnClass(StringRedisTemplate::class)
+    @ConditionalOnBean(StringRedisTemplate::class)
+    @AutoConfigureAfter(RedisAutoConfiguration::class)
     @Import(RedisSessionService::class)
     inner class RedisSessionConfiguration
 }
@@ -124,7 +133,8 @@ class SessionConfiguration {
 class RateLimiterConfiguration(val properties: RateLimiterConfigurationProperties) {
 
     @Configuration
-    @ConditionalOnClass(StringRedisTemplate::class)
+    @ConditionalOnBean(StringRedisTemplate::class)
+    @AutoConfigureAfter(RedisAutoConfiguration::class)
     @Import(RedisRateLimiterService::class)
     inner class RedisRateLimiterConfiguration
 }
