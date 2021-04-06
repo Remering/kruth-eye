@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Import
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
@@ -121,8 +122,8 @@ class TokenConfiguration {
 class SessionConfiguration {
 
     @Configuration
-    @ConditionalOnBean(StringRedisTemplate::class)
-    @AutoConfigureAfter(RedisAutoConfiguration::class)
+//    @ConditionalOnBean(StringRedisTemplate::class)
+    @DependsOn("org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration")
     @Import(RedisSessionService::class)
     inner class RedisSessionConfiguration
 }
@@ -132,9 +133,12 @@ class SessionConfiguration {
 @EnableConfigurationProperties(RateLimiterConfigurationProperties::class)
 class RateLimiterConfiguration(val properties: RateLimiterConfigurationProperties) {
 
+    @Bean
+    fun limitDuration() = properties.limitDuration
+
     @Configuration
-    @ConditionalOnBean(StringRedisTemplate::class)
-    @AutoConfigureAfter(RedisAutoConfiguration::class)
+//    @ConditionalOnBean(StringRedisTemplate::class)
+    @DependsOn("org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration")
     @Import(RedisRateLimiterService::class)
     inner class RedisRateLimiterConfiguration
 }
