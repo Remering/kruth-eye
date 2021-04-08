@@ -1,12 +1,15 @@
 package com.github.remering.krutheye.message
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.github.remering.krutheye.bean.*
+import com.github.remering.krutheye.bean.TextureModel
+import com.github.remering.krutheye.bean.TextureType
+import com.github.remering.krutheye.bean.YggdrasilProfileUUID
+import com.github.remering.krutheye.bean.YggdrasilUserUUID
 import com.github.remering.krutheye.entity.MessageEntity
 import com.github.remering.krutheye.entity.YggdrasilProfileEntity
 import com.github.remering.krutheye.entity.YggdrasilUserEntity
-import com.github.remering.krutheye.service.CodecService
 import java.net.URL
 import java.time.Instant
 import java.util.*
@@ -65,5 +68,6 @@ data class TextureMessage(
     val profileName: String,
     val profileId: YggdrasilProfileUUID,
     val textures: Map<TextureType, TextureDataMessage>,
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT) // FIXME: returns float rather than long ?
     val timestamp: Instant = Instant.now(),
 )
