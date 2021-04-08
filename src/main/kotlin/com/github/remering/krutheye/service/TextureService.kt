@@ -29,10 +29,10 @@ class TextureService(
         val textures = textureMapper.getByProfileUUID(profileUUID)
         val textureDataMessages = hashMapOf<TextureType, TextureDataMessage>()
         for (texture in textures) {
-            textureDataMessages.put(texture.type, TextureDataMessage(
+            textureDataMessages[texture.type] = TextureDataMessage(
                 model = texture.model,
                 url = getURL(texture.hash)
-            ))
+            )
         }
         val textureMessage = TextureMessage(
             profileName = profileMessage.name,
