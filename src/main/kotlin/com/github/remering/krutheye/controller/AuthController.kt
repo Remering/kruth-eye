@@ -6,7 +6,11 @@ import com.github.remering.krutheye.bean.ServerMeta
 import com.github.remering.krutheye.entity.YggdrasilProfileEntity
 import com.github.remering.krutheye.entity.YggdrasilUserEntity
 import com.github.remering.krutheye.message.*
-import com.github.remering.krutheye.service.*
+import com.github.remering.krutheye.service.ProfileService
+import com.github.remering.krutheye.service.RateLimiterService
+import com.github.remering.krutheye.service.TokenService
+import com.github.remering.krutheye.service.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -31,6 +35,8 @@ class AuthController(
     private val serverMeta: ServerMeta,
     private val rateLimiterService: RateLimiterService,
 ) {
+
+    private val logger = LoggerFactory.getLogger(AuthController::class.java)!!
 
     private fun authenticate(username: String, password: String): Tuple3<YggdrasilUserEntity, YggdrasilProfileEntity?, List<YggdrasilProfileEntity>> {
         val userEntity: YggdrasilUserEntity
@@ -61,6 +67,9 @@ class AuthController(
         val (userEntity, selectedProfile, profiles) = authenticate(username, password)
 
         val token = tokenService.acquire(clientToken, userEntity.uuid, selectedProfile?.uuid)
+
+        logger.info("username $username (uuid = ${userEntity.uuid}) authenticated with access token ${token.accessToken} and client token ${token.clientToken}")
+
         return AuthenticateResponse(
             token.accessToken,
             token.clientToken,
@@ -79,6 +88,8 @@ class AuthController(
         }?.toMessage()
         val userEntity = if (requestUser) userService.getByUUID(newToken.user) else null
 
+        logger.info("refresh access token from $accessToken to ${newToken.accessToken} with ${newToken.clientToken}")
+
         return RefreshResponse(
             accessToken = newToken.accessToken,
             clientToken = newToken.clientToken,
@@ -93,8 +104,10 @@ class AuthController(
         val (accessToken, clientToken) = request
         val valid = tokenService.validate(clientToken, accessToken)
         if (!valid) {
+            logger.info("validation failed with access token $accessToken and client token $clientToken")
             throw InvalidTokenException()
         }
+        logger.info("validate successfully with access token $accessToken and client token $clientToken")
     }
 
 
@@ -103,6 +116,7 @@ class AuthController(
     fun invalidate(@RequestBody request: InvalidateRequest) {
         val (accessToken, _) = request
         tokenService.invalidate(accessToken)
+        logger.info("invalidate with access token $accessToken")
     }
 
     @PostMapping("/signout")
@@ -111,5 +125,6 @@ class AuthController(
         val (username, password) = request
         val (userEntity, _, _) = authenticate(username, password)
         tokenService.revokeAll(userEntity.uuid)
+        logger.info("user $username (uuid = ${userEntity.uuid}) sign out")
     }
 }
