@@ -26,7 +26,7 @@ class CodecService(
     private val md5Digest = MessageDigest.getInstance("MD5")!!
 
     val pemPublicKeyString by lazy {
-        "-----BEGIN PUBLIC KEY-----${Base64.getMimeEncoder(76, byteArrayOf('\n'.toByte())).encodeToString(publicKey.encoded)}-----END PUBLIC KEY-----"
+        "-----BEGIN PUBLIC KEY-----\n${Base64.getMimeEncoder(76, byteArrayOf('\n'.toByte())).encodeToString(publicKey.encoded)}\n-----END PUBLIC KEY-----"
     }
 
     fun sign(data: ByteArray) = signature.run {
