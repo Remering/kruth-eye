@@ -60,10 +60,10 @@ data class ServerPageLinkConfigurationProperties(
 @ConstructorBinding
 @ConfigurationProperties("kruth-eye.meta")
 data class ServerMetadataConfigurationProperties(
-    val serverName: String? = null,
-    val implementationName: String? = "Kruth Eye",
+    val serverName: String? = "Kruth Eye",
+    val implementationName: String? = "kruth-eye",
     val implementationVersion: KotlinVersion? = KotlinVersion(0, 1, 0),
-    val skinDomains: List<String> = listOf(),
+    val skinDomains: List<String> = listOf("localhost"),
 )
 
 @ConstructorBinding
